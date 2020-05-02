@@ -21,7 +21,8 @@ public class Main {
          */
         KeyPair pk_scrooge = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         KeyPair pk_alice   = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-
+        KeyPair pk_bob = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        KeyPair pk_dan = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         /*
          * Set up the root transaction:
          *
@@ -48,7 +49,7 @@ public class Main {
         utxoPool.addUTXO(utxo, tx.getOutput(0));
 
         /*  
-         * Set up a test Transaction
+         * Set up a test Transaction tx2
          */
         Tx tx2 = new Tx();
 
@@ -68,6 +69,27 @@ public class Main {
         // and it contains the coin from Scrooge, therefore I have to sign with the private key from Scrooge
         tx2.signTx(pk_scrooge.getPrivate(), 0);
         
+        /*  
+         * Set up a test Transaction tx3
+         */
+        Tx tx3 = new Tx();
+
+        // the Transaction.Output of tx at position 0 has a value of 10
+        tx3.addInput(tx2.getHash(), 0); // 5 coins alice
+
+        // I split the coin of value 5 to 
+        // 3 coins to bob
+        // 2 coins to dan
+        tx3.addOutput(3, pk_bob.getPublic());
+        tx3.addOutput(2, pk_dan.getPublic());
+        // Note that in the real world fixed-point types would be used for the values, not doubles.
+        // Doubles exhibit floating-point rounding errors. This type should be for example BigInteger
+        // and denote the smallest coin fractions (Satoshi in Bitcoin).
+
+        // There is only one (at position 0) Transaction.Input in tx3
+        // and it contains the coin from Alice, therefore I have to sign with the private key from Alice
+        tx3.signTx(pk_alice.getPrivate(), 0);
+
         /*
          * Start the test
          */
@@ -77,6 +99,13 @@ public class Main {
         System.out.println("txHandler.isValidTx(tx2) returns: " + txHandler.isValidTx(tx2));
         System.out.println("txHandler.handleTxs(new Transaction[]{tx2}) returns: " +
             txHandler.handleTxs(new Transaction[]{tx2}).length + " transaction(s)");
+        System.out.println("txHandler.isValidTx(tx3) returns: " + txHandler.isValidTx(tx3));
+        System.out.println("txHandler.handleTxs(new Transaction[]{tx2}) returns: " +
+                txHandler.handleTxs(new Transaction[]{tx3}).length + " transaction(s)");
+        
+        MaxFeeTxHandler maxfeetxHandler = new MaxFeeTxHandler(utxoPool);
+        System.out.println("maxfeetxHandler.handleTxs(new Transaction[]{tx2}) returns: " +
+        		maxfeetxHandler.handleTxs(new Transaction[]{tx2,tx3}).length + " transaction(s)");
     }
 
 

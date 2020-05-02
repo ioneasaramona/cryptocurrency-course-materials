@@ -72,7 +72,7 @@ public class Transaction {
     public void removeInput(int index) {
         inputs.remove(index);
     }
-    // sterge Inputul ut din Tranzactie
+    // sterge Inputul ut din Tranzactie egal cu UTXOul dat ca parametru
     public void removeInput(UTXO ut) {
         for (int i = 0; i < inputs.size(); i++) {
             Input in = inputs.get(i);
