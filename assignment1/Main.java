@@ -59,7 +59,7 @@ public class Main {
         // I split the coin of value 10 into 3 coins and send all of them for simplicity to
         // the same address (Alice)
         tx2.addOutput(5, pk_alice.getPublic());
-        tx2.addOutput(3, pk_alice.getPublic());
+        tx2.addOutput(2, pk_alice.getPublic());
         tx2.addOutput(2, pk_alice.getPublic());
         // Note that in the real world fixed-point types would be used for the values, not doubles.
         // Doubles exhibit floating-point rounding errors. This type should be for example BigInteger
@@ -80,7 +80,7 @@ public class Main {
         // I split the coin of value 5 to 
         // 3 coins to bob
         // 2 coins to dan
-        tx3.addOutput(3, pk_bob.getPublic());
+        tx3.addOutput(2.5, pk_bob.getPublic());
         tx3.addOutput(2, pk_dan.getPublic());
         // Note that in the real world fixed-point types would be used for the values, not doubles.
         // Doubles exhibit floating-point rounding errors. This type should be for example BigInteger
@@ -100,10 +100,12 @@ public class Main {
         System.out.println("txHandler.handleTxs(new Transaction[]{tx2}) returns: " +
             txHandler.handleTxs(new Transaction[]{tx2}).length + " transaction(s)");
         System.out.println("txHandler.isValidTx(tx3) returns: " + txHandler.isValidTx(tx3));
-        System.out.println("txHandler.handleTxs(new Transaction[]{tx2}) returns: " +
+        System.out.println("txHandler.handleTxs(new Transaction[]{tx3}) returns: " +
                 txHandler.handleTxs(new Transaction[]{tx3}).length + " transaction(s)");
         
         MaxFeeTxHandler maxfeetxHandler = new MaxFeeTxHandler(utxoPool);
+        System.out.println("txHandler.isValidTx(tx2) returns: " + maxfeetxHandler.isValidTxFee(tx2));
+        System.out.println("txHandler.isValidTx(tx3) returns: " + maxfeetxHandler.isValidTxFee(tx3));
         System.out.println("maxfeetxHandler.handleTxs(new Transaction[]{tx2}) returns: " +
         		maxfeetxHandler.handleTxs(new Transaction[]{tx2,tx3}).length + " transaction(s)");
     }
